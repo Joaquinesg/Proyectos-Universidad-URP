@@ -1,0 +1,170 @@
+//clase CCONEXION
+package com.mycompany.conectarsql;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+public class Cconexion {
+    public static Connection establecerconexion(){
+        String conexionURL = "jdbc:sqlserver://localhost:1433;databaseName=Northwind;encrypt=true; trustServerCertificate=true";
+        try{
+            Connection con = DriverManager.getConnection(conexionURL, "sa", "12345");
+            System.out.println("Se conecto!");
+            return con;
+        }
+        catch(SQLException ex){
+            System.out.println("Fallo la conexion" +ex.toString());
+            return null;
+        }
+    }
+}
+
+//CLASE CONECTARSQL
+
+package com.mycompany.conectarsql;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class ConectarSQL {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+        Cconexion.establecerconexion();
+        Statement sql= Cconexion.establecerconexion().createStatement();
+        ResultSet rs = sql.executeQuery("SELECT ProductID, ProductName, UnitPrice FROM Products WHERE ProductID > 15 OR UnitPrice < 10");
+        while(rs.next()){
+            System.out.println(rs.getInt("ProductID") + "\t" + rs.getString("ProductName") + "\t" + rs.getInt("UnitPrice")); 
+        }
+        
+        String crea = "CREATE TABLE Campo (IdCampo INTEGER, Nombre VARCHAR(32), Instituto VARCHAR, PRIMARY KEY (IdCampo))";
+        sql.executeUpdate(crea);
+        
+        String delete = "DROP TABLE Campo";
+        sql.executeUpdate(delete);
+    }
+}
+}
+}
+}
+
+//DEPENDENCUYS POM MAVEN
+<dependencies>    
+    <!-- https://mvnrepository.com/artifact/com.microsoft.sqlserver/mssql-jdbc -->
+<dependency>
+    <groupId>com.microsoft.sqlserver</groupId>
+    <artifactId>mssql-jdbc</artifactId>
+    <version>11.2.1.jre18</version>
+</dependency>
+    </dependencies>
+    
+// FRAME
+ 
+package com.mycompany.conectarsql;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+public class FRAME extends javax.swing.JFrame {
+   Cconexion app=new Cconexion();
+   
+    //BOTTON MOSTRAR
+    app.establecerconexion();
+        Statement stmt=null;
+         try{
+             stmt= Cconexion.establecerconexion().createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT ProductID, ProductName, UnitPrice FROM Products ");
+        String mensaje="";
+        while(rs.next()){
+            mensaje+=rs.getInt("ProductID") + "\n" 
+                   + rs.getString("ProductName") + "\n" 
+                   + rs.getInt("UnitPrice"); 
+        }
+        TA.setText(mensaje);
+         }
+         catch(SQLException e){ JOptionPane.showMessageDialog(this, e.getMessage());
+    }
+
+    //BOTON AGREGAR
+   cconexion app= new cconexion();
+     app.establecerconexion();
+     PreparedStatement ps=null;
+    String inserta= "INSERT INTO Products(ProductName,UnitPrice) VALUES(?,?)";
+    try{
+        String nombre= TNOMBRE.getText();
+        double precio=Double.parseDouble(TPRECIO.getText()  );
+        ps=app.establecerconexion().prepareStatement(inserta);
+        ps.setString(1, nombre);
+         ps.setDouble(2, precio);
+         ps.executeUpdate();
+    }
+     catch(SQLException e){
+         JOptionPane.showMessageDialog(this, e.getMessage());
+     }
+         
+ //BOTON MOSTRAR (TABLA)
+ package com.mycompany.crud;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
+ String mensaje="";
+    try{
+    cconexion.establecerconexion();
+    Statement sql=cconexion.establecerconexion().createStatement();
+    ResultSet rs=sql.executeQuery("SELECT CustomerID,CompanyName,ContactName FROM Customers");
+    String [][] Matriz=new String[100][3];
+    int i=0;
+    while(rs.next()){
+      Matriz[i][0]=rs.getString("CustomerID");
+      Matriz[i][1]=rs.getString("CompanyName");
+      Matriz[i][2]=rs.getString("ContactName");
+      i++;
+    }
+    DefaultTableModel dtm= new DefaultTableModel(Matriz,new String[]{"","",""});
+    TablaProductos.setModel(dtm);
+    }
+    catch(SQLException e){
+     JOptionPane.showMessageDialog(this, e.getMessage());
+    }
+    
+//boton modificar (TABLA)
+     cconexion.establecerconexion();
+     PreparedStatement ps=null;
+     String inserta="UPDATE Customers set CustomerID=?,CompanyName=? where ContactName=? ";
+        try{
+     String ide=   ID.getText();
+     String nombre =NOMBRE.getText();
+     ps=cconexion.establecerconexion().prepareStatement(inserta);
+     int fila=TablaProductos.getSelectedRow();
+     int id=Integer.parseInt(TablaProductos.getValueAt(fila,0).toString());
+     ps.setString(1, ide);
+     ps.setString(2, nombre);
+     ps.setInt(3, id);
+     ps.executeUpdate();
+    }
+    catch(SQLException e){
+        JOptionPane.showMessageDialog(this, e.getMessage());
+    }
+
+// click (en tabla)
+ try{
+         int fila=TablaProductos.getSelectedRow();
+         int id=Integer.parseInt(TablaProductos.getValueAt(fila,0).toString());
+         cconexion.establecerconexion();
+         String consulta="SELECT CustomerID,CompanyName FROM Customers WHERE ContactName=?";
+         PreparedStatement ps;
+         ps=cconexion.establecerconexion().prepareStatement(consulta);
+         ps.setInt(1, id);
+         ResultSet rs=ps.executeQuery();
+         while(rs.next()){
+      ID.setText(rs.getString("CustomerID"));
+      NOMBRE.setText(rs.getString("CompanyName"));
+    }
+       }
+       catch(SQLException e){
+        JOptionPane.showMessageDialog(this, e.getMessage());
+    }
+    
+
+
